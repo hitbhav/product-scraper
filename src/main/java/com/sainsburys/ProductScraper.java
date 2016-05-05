@@ -119,7 +119,7 @@ public class ProductScraper {
 
 				String strPrice = element.text();
 				strPrice = strPrice.replace("/unit", "");
-				strPrice = strPrice.replace("£", "");
+				strPrice = strPrice.replace("Â£", "");
 
 				unitPrice = Float.parseFloat(strPrice);
 			}
