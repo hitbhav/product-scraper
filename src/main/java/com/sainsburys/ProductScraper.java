@@ -32,7 +32,6 @@ public class ProductScraper {
 	}
 
 	public String scraper() {
-
 		JSONObject jsonObject = new JSONObject();
 		JSONArray jsonResults = new JSONArray();
 		jsonObject.put("results", jsonResults);
@@ -40,39 +39,44 @@ public class ProductScraper {
 		float total = 0.0f;
 
 		Connection con = Jsoup.connect(webURL.toString());
-
+		
 		// First scenario: No connection
 		if (con == null) {
 			return "{}";
 		}
 
 		try {
+			
 			Element prodListner = con.get().select("ul.productLister").first();
 
 			// Second scenario: Dont have productsn
 			if (prodListner == null) {
+			
 				return "{}";
 			}
-
+			
 			Elements prodElements = prodListner.getElementsByTag("li");
+			int i =1;
 			for (Element singleProductElement : prodElements) {
-
+				
 				Element prodInfoElement = singleProductElement.select("div.productInfo").first();
-
 				Element weblinkElement = prodInfoElement.getElementsByTag("a").first();
 
 				String productFullInfoLink = weblinkElement.attr("href");
-
 				ProductInfo productInfo = getFullProuctInfo(productFullInfoLink);
 
+				//Make result
 				jsonResults.add(productInfo.toJSON());
+				//Make total
+				total += productInfo.getUnitPrice();
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		return ""; // return json
+		jsonObject.put("total", total);
+		return jsonObject.toString(); // return json
 	}
 
 	private ProductInfo getFullProuctInfo(String productFullInfoLink) {
@@ -93,7 +97,8 @@ public class ProductScraper {
 
 			Document document = con.get();
 
-			Element element = document.select("div.productTitleDesciptionContainer").first();
+			Element element = document.select("div.productTitleDescriptionContainer").first();
+												   
 			if (element == null) {
 				return null;
 			} else {

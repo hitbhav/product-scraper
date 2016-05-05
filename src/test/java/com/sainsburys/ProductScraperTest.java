@@ -38,21 +38,24 @@ public class ProductScraperTest {
 		productScraper = null;
 	}
 
-	@Ignore
+	@Test
 	public void testProuctScraperNotEmpty() {
 		String jsonReply = productScraper.scraper();
+		System.out.println(jsonReply);
 		assertTrue(!jsonReply.isEmpty());
 	}
 	
-	@Ignore
+	@Test
 	public void testProuctScraperHasResult() {
 		String jsonReply = productScraper.scraper();
+		System.out.println(jsonReply);
 		assertTrue(jsonReply.contains("results"));
 	}
 	
-	@Ignore
+	@Test
 	public void testProuctScraperHasTotal() {
 		String jsonReply = productScraper.scraper();
+		System.out.println(jsonReply);
 		assertTrue(jsonReply.contains("total"));
 	}
 
