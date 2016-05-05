@@ -77,44 +77,68 @@ public class ProductScraper {
 
 	private ProductInfo getFullProuctInfo(String productFullInfoLink) {
 
-		String title="";
-		float size= 0.0f;
-		float unitPrice=0.0f;
-		String description="";
+		String title = "";
+		float size = 0.0f;
+		float unitPrice = 0.0f;
+		String description = "";
 
 		Connection con = Jsoup.connect(productFullInfoLink);
 
-		//First scenario: No connection
-		if(con == null){
+		// First scenario: No connection
+		if (con == null) {
 			return null;
 		}
-				
+
 		try {
-			
+
 			Document document = con.get();
-			
+
 			Element element = document.select("div.productTitleDesciptionContainer").first();
-			if(element ==null)
-			{
+			if (element == null) {
 				return null;
+			} else {
+
+				// Get title
+				Element titleEle = element.getElementsByTag("h1").first();
+				title = titleEle.text();
+
+				// Get size of document
+				size = document.toString().length() / 1024; // in kb
 			}
-			
-			//get title
-			Element titleEle = element.getElementsByTag("h1").first();
-			title = titleEle.text();
-		
-			
-		}catch(IOException e){
+
+			// Get price
+			element = document.select("p.pricePerUnit").first();
+			if (element == null) {
+				return null;
+			} else {
+
+				String strPrice = element.text();
+				strPrice = strPrice.replace("/unit", "");
+				strPrice = strPrice.replace("£", "");
+
+				unitPrice = Float.parseFloat(strPrice);
+			}
+
+			// Get description
+			element = document.select("div.productText").first();
+			if (element == null) {
+				return null;
+			} else {
+				description = element.text();
+			}
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		ProductInfo productInfo = new ProductInfo();
-		productInfo.setTitle(title);
-		
-		
+
+		/*
+		 * ProductInfo productInfo = new ProductInfo();
+		 * productInfo.setTitle(title);
+		 */
+
+		ProductInfo productInfo = new ProductInfo(title, size, unitPrice, description);
+
 		return productInfo;
 	}
-	
-	
-	
+
 }
